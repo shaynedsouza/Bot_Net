@@ -6849,12 +6849,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc4c72ffda0d60d4ea231b461bd0935a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  packetSpawnMinTime: 1
-  packetSpawnMaxTime: 3
+  packetSpawnMinTime: 6
+  startPanel: {fileID: 0}
+  endPanel: {fileID: 0}
+  clients:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   goodPacketsText: {fileID: 0}
   virusesTerminatedText: {fileID: 0}
   serverHealthImage: {fileID: 0}
   antiVirusHealthImage: {fileID: 0}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!65 &7271894476437097038
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6867,7 +6879,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0.87, z: 0.08}
+  m_Center: {x: -0.29, y: 0.4, z: 0.38}
 --- !u!1 &8892728840070271689
 GameObject:
   m_ObjectHideFlags: 0

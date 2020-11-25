@@ -2,27 +2,39 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using UnityEngine.Events;
 
 public class ClientScript : MonoBehaviour
 {
 
     [SerializeField] GameObject goodPacketPrefab, virusPrefab;
 
-    float packetSpawnMinTime = 4f, packetSpawnMaxTime = 7f, disabledTime = 5f;
+    float packetSpawnMinTime = 6f, packetSpawnMaxTime, disabledTime = 5f;
     bool canGeneratePacket = true, isDisabled = false, gameRunning = true;
     Vector3 packetSpawnPos;
     GameObject packet;
     public Action<float> userHasClickedAction;
 
-    void Start()
+
+
+    private void OnEnable()
     {
-        SetPacketSpawnPos();
+        GameManagerScript.spawnTimerAction += SetSpawnSpeed;
+        //GameManagerScript.instance.Subscribe(SetSpawnSpeed);
     }
 
 
+    private void OnDisable()
+    {
+        GameManagerScript.spawnTimerAction -= SetSpawnSpeed;
+        //GameManagerScript.instance.UnSubscribe(SetSpawnSpeed);
 
+    }
 
+    void Start()
+    {
+        packetSpawnMaxTime = packetSpawnMinTime + 1f;
+        SetPacketSpawnPos();
+    }
 
 
 
@@ -31,6 +43,20 @@ public class ClientScript : MonoBehaviour
     {
         GeneratePackets();
     }
+
+
+
+    private void SetSpawnSpeed(float minSpawnSpeed)
+    {
+        packetSpawnMinTime = minSpawnSpeed;
+        packetSpawnMaxTime = minSpawnSpeed + 1f;
+    }
+
+
+
+
+
+
 
 
 
@@ -67,13 +93,13 @@ public class ClientScript : MonoBehaviour
         }
     }
 
-    //Random values 1-75 generate a good packet and 76-100 a virus 
+    //Random values 1-70 generate a good packet and 71-100 a virus 
     IEnumerator Deploy()
     {
         canGeneratePacket = false;
         int randomValue = UnityEngine.Random.Range(0, 101);
 
-        if (randomValue <= 75)
+        if (randomValue <= 70)
         {
             packet = Instantiate(goodPacketPrefab, packetSpawnPos, Quaternion.identity, transform);
         }
@@ -153,4 +179,23 @@ public class ClientScript : MonoBehaviour
 
 
 
+    public bool CanDisable()
+    {
+        return (!isDisabled && packet!=null);
+    }
+
+    public bool isVirus()
+    {
+
+        if (packet != null && packet.tag == "virus")
+        {
+            return true;
+
+        }
+        else
+        { 
+            return false;
+        }
+
+    }
 }

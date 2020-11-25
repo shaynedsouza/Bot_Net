@@ -4,19 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System;
+
 public class GameManagerScript : MonoBehaviour
 {
 
     //Singleton pattern
     public static GameManagerScript instance;
 
-    [SerializeField] float packetSpawnMinTime = 1f, packetSpawnMaxTime = 3f;
+    [SerializeField] float packetSpawnMinTime = 6f;
     [SerializeField] GameObject startPanel, endPanel;
+    [SerializeField] List<GameObject> clients;
     [SerializeField] TextMeshProUGUI goodPacketsText, virusesTerminatedText;
     [SerializeField] Image serverHealthImage, antiVirusHealthImage;
     [SerializeField] LayerMask layerMask;
+    public static Action<float> spawnTimerAction;
 
-    int serverHealth, serverHealthMax = 1, antiVirusHealth, antiVirusHealthMax = 30, goodPackets, virusesTerminated;
+
+    int serverHealth, serverHealthMax = 15, antiVirusHealthMax = 30, virusesTerminated;
+    public int score, antiVirusHealth;
     bool gameStarted = false;
 
     private void Awake()
@@ -39,8 +45,12 @@ public class GameManagerScript : MonoBehaviour
         goodPacketsText.text = "Good Packets : 0";
         virusesTerminatedText.text = "Viruses Terminated : 0";
         startPanel.SetActive(true);
-
+        score = 0;
+        spawnTimerAction.Invoke(packetSpawnMinTime);
     }
+
+
+
 
     void Update()
     {
@@ -72,8 +82,23 @@ public class GameManagerScript : MonoBehaviour
         if (gameStarted)
         {
             antiVirusHealth += 1;
-            goodPacketsText.text = $"Good Packets : {antiVirusHealth}";
+            score += 1;
+            goodPacketsText.text = $"Good Packets : {score}";
             antiVirusHealthImage.fillAmount = (float)antiVirusHealth / (float)antiVirusHealthMax;
+            if (antiVirusHealth == antiVirusHealthMax)
+            {
+                resetAntivirus();
+            }
+
+            if(score % 15 == 0 && packetSpawnMinTime>1f)
+            {
+                packetSpawnMinTime -= 1f;
+                spawnTimerAction.Invoke(packetSpawnMinTime);
+                Debug.Log($"Min spawn time : {packetSpawnMinTime}");
+            }
+
+
+
         }
     }
 
@@ -95,7 +120,6 @@ public class GameManagerScript : MonoBehaviour
             }
             else
             {
-                virusesTerminatedText.text = $"Viruses Terminated : {serverHealth}";
                 serverHealthImage.fillAmount = (float)serverHealth / (float)serverHealthMax;
             }
         }
@@ -115,8 +139,20 @@ public class GameManagerScript : MonoBehaviour
             if(Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask)){
                 if (hit.transform.parent.parent.GetComponent<ClientScript>())
                 {
-                    hit.transform.parent.parent.GetComponent<ClientScript>().DisableClient();
+                    ClientScript tempClientScript = hit.transform.parent.parent.GetComponent<ClientScript>();
 
+
+                    //Will disable if not done yet
+                    if (tempClientScript.CanDisable())
+                    {
+                        //Checks if the packet is a virus, to update the required field
+                        if (tempClientScript.isVirus())
+                        {
+                            virusesTerminated += 1;
+                            virusesTerminatedText.text = $"Viruses Terminated : {virusesTerminated}";
+                        }
+                        tempClientScript.DisableClient();
+                    }
                 }
                 else
                 {
@@ -130,6 +166,18 @@ public class GameManagerScript : MonoBehaviour
 
     private void resetAntivirus()
     {
+        //Delay
+        //speed up?
+        if(score <= 30)
+        {
+            clients[3].SetActive(true);
+            clients[4].SetActive(true);
+        }
+        else if(score <= 90)
+        {
+            clients[5].SetActive(true);
+            clients[6].SetActive(true);
+        }
         antiVirusHealth = 0;
     }
 
@@ -154,7 +202,7 @@ public class GameManagerScript : MonoBehaviour
     public void EndGame()
     {
         ClientScript[] clientScripts = FindObjectsOfType<ClientScript>();
-        Debug.Log("array length" + clientScripts.Length);
+        Debug.Log("array length     " + clientScripts.Length);
         foreach(ClientScript child in clientScripts)
         {
             child.StopTransmission();
