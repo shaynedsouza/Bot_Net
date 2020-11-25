@@ -10,10 +10,10 @@ public class ClientScript : MonoBehaviour
     [SerializeField] GameObject goodPacketPrefab, virusPrefab;
 
     float packetSpawnMinTime = 4f, packetSpawnMaxTime = 7f, disabledTime = 5f;
-    bool canGeneratePacket = true, isDisabled = false;
+    bool canGeneratePacket = true, isDisabled = false, gameRunning = true;
     Vector3 packetSpawnPos;
     GameObject packet;
-    public Action userHasClickedAction;
+    public Action<float> userHasClickedAction;
 
     void Start()
     {
@@ -44,7 +44,6 @@ public class ClientScript : MonoBehaviour
             {
                 packetSpawnPos = child.position;
                 linkPresent = true;
-                //Debug.Log(packetSpawnPos);
             }
         }
 
@@ -62,7 +61,7 @@ public class ClientScript : MonoBehaviour
     //Generates a packet after a delay using a coroutine 
     private void GeneratePackets()
     {
-        if (canGeneratePacket && !isDisabled && packet == null)
+        if (canGeneratePacket && !isDisabled && packet == null && gameRunning)
         {
             StartCoroutine(Deploy());
         }
@@ -72,26 +71,25 @@ public class ClientScript : MonoBehaviour
     IEnumerator Deploy()
     {
         canGeneratePacket = false;
-
-
         int randomValue = UnityEngine.Random.Range(0, 101);
 
         if (randomValue <= 75)
         {
             packet = Instantiate(goodPacketPrefab, packetSpawnPos, Quaternion.identity, transform);
-            packet.GetComponent<PacketTravelScript>().SetTarget(transform.position);
         }
         else
         {
             packet = Instantiate(virusPrefab, packetSpawnPos, Quaternion.identity, transform);
-            packet.GetComponent<PacketTravelScript>().SetTarget(transform.position);
 
         }
 
+        packet.GetComponent<PacketTravelScript>().SetTarget(transform.position);
         float waitTime = UnityEngine.Random.Range(packetSpawnMinTime, packetSpawnMaxTime);
         yield return new WaitForSeconds(waitTime);
-        canGeneratePacket = true;
-
+        if (gameRunning)
+        {
+            canGeneratePacket = true;
+        }
     }
 
 
@@ -102,20 +100,55 @@ public class ClientScript : MonoBehaviour
 
         if (!isDisabled && packet != null)
         {
-            isDisabled = true;
             packet = null;
-            userHasClickedAction.Invoke();
+            isDisabled = true;
+            userHasClickedAction.Invoke(3f);
             StartCoroutine(EnableClient());
         }
 
     }
 
 
-
     IEnumerator EnableClient()
     {
         yield return new WaitForSeconds(disabledTime);
-        isDisabled = false;
+        
+
+        //Avoids chance of getting enabled if coroutine starts before the game is lost
+        if (gameRunning)
+        {
+            isDisabled = false;
+        }
+    }
+
+
+    //Invoked when the user clicks on the start button
+    public void StartTrasmission()
+    {
+        if (packet != null)
+        {
+            canGeneratePacket = true;
+            isDisabled = false;
+            packet = null;
+            userHasClickedAction.Invoke(0f);
+        }
+    }
+
+
+
+
+    //Invoked when the game ends
+    public void StopTransmission()
+    {
+        {
+            isDisabled = true; // Not needed?
+            packet = null;
+            gameRunning = false;
+            if (userHasClickedAction != null)
+            {
+                userHasClickedAction.Invoke(UnityEngine.Random.Range(0.5f, 1f));
+            }
+        }
     }
 
 

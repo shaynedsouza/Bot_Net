@@ -50,12 +50,11 @@ public class PacketTravelScript : MonoBehaviour
     
     
     //Invoked via subscription to the clientScript event, used to stop the packet
-    private void FreezeTravel()
+    private void FreezeTravel(float destroyTime)
     {
-        Debug.Log("Unsubscribed");
         speed = 0f;
         //Invoke func to exploded virus
-        Destroy(gameObject, 3f);
+        Destroy(gameObject, destroyTime);
     }
 
 
