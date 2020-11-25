@@ -71,8 +71,7 @@ public class ClientScript : MonoBehaviour
     IEnumerator Deploy()
     {
         canGeneratePacket = false;
-        float waitTime = UnityEngine.Random.Range(packetSpawnMinTime, packetSpawnMaxTime);
-        yield return new WaitForSeconds(waitTime);
+
 
         int randomValue = UnityEngine.Random.Range(0, 101);
 
@@ -87,6 +86,9 @@ public class ClientScript : MonoBehaviour
             packet.GetComponent<PacketTravelScript>().SetTarget(transform.position);
 
         }
+
+        float waitTime = UnityEngine.Random.Range(packetSpawnMinTime, packetSpawnMaxTime);
+        yield return new WaitForSeconds(waitTime);
         canGeneratePacket = true;
 
     }

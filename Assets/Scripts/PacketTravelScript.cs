@@ -14,7 +14,7 @@ public class PacketTravelScript : MonoBehaviour
         rigidBody = GetComponent<Rigidbody>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (targetPosition != null)
         {

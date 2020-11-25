@@ -32,7 +32,7 @@ public class GameManagerScript : MonoBehaviour
 
     void Update()
     {
-        
+        UpdateAntivirusBar();
     }
 
 
@@ -48,4 +48,22 @@ public class GameManagerScript : MonoBehaviour
 
         }
     }
+
+    private void UpdateAntivirusBar()
+    {
+
+    }
+
+
+
+
+    private void resetAntivirus()
+    {
+        antiVirusHealth = 0f;
+    }
+
+
+
+
+
 }
