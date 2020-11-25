@@ -6849,6 +6849,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc4c72ffda0d60d4ea231b461bd0935a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  packetSpawnMinTime: 1
+  packetSpawnMaxTime: 3
+  goodPacketsText: {fileID: 0}
+  virusesTerminatedText: {fileID: 0}
+  serverHealthImage: {fileID: 0}
+  antiVirusHealthImage: {fileID: 0}
 --- !u!65 &7271894476437097038
 BoxCollider:
   m_ObjectHideFlags: 0

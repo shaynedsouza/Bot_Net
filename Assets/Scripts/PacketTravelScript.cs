@@ -12,7 +12,25 @@ public class PacketTravelScript : MonoBehaviour
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
+
     }
+
+    //Subscribe to the event
+    private void OnEnable()
+    {
+        transform.parent.GetComponent<ClientScript>().userHasClickedAction += FreezeTravel;
+    }
+
+
+    //Unsubscribe to the event
+    private void OnDisable()
+    {
+        transform.parent.GetComponent<ClientScript>().userHasClickedAction -= FreezeTravel;
+    }
+
+
+
+
 
     void FixedUpdate()
     {
@@ -28,6 +46,16 @@ public class PacketTravelScript : MonoBehaviour
         rigidBody.velocity = direction * speed;
 
 
+    } 
+    
+    
+    //Invoked via subscription to the clientScript event, used to stop the packet
+    private void FreezeTravel()
+    {
+        Debug.Log("Unsubscribed");
+        speed = 0f;
+        //Invoke func to exploded virus
+        Destroy(gameObject, 3f);
     }
 
 
@@ -39,9 +67,7 @@ public class PacketTravelScript : MonoBehaviour
     {
         startPosition = transform.position;
         targetPosition = destination;
-        //Debug.Log($" start : {startPosition},  target : {targetPosition}");
         direction = (targetPosition - startPosition).normalized;
-        //direction = targetPosition - startPosition;
 
     }
 

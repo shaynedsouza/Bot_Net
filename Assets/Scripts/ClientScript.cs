@@ -2,17 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//using UnityEngine.Events;
 
 public class ClientScript : MonoBehaviour
 {
 
     [SerializeField] GameObject goodPacketPrefab, virusPrefab;
 
-    float packetSpawnMinTime = 4f, packetSpawnMaxTime = 7f;
-    bool canGeneratePacket = true;
+    float packetSpawnMinTime = 4f, packetSpawnMaxTime = 7f, disabledTime = 5f;
+    bool canGeneratePacket = true, isDisabled = false;
     Vector3 packetSpawnPos;
-
-
+    GameObject packet;
+    public Action userHasClickedAction;
 
     void Start()
     {
@@ -61,7 +62,7 @@ public class ClientScript : MonoBehaviour
     //Generates a packet after a delay using a coroutine 
     private void GeneratePackets()
     {
-        if (canGeneratePacket)
+        if (canGeneratePacket && !isDisabled && packet == null)
         {
             StartCoroutine(Deploy());
         }
@@ -77,12 +78,12 @@ public class ClientScript : MonoBehaviour
 
         if (randomValue <= 75)
         {
-            GameObject packet = Instantiate(goodPacketPrefab, packetSpawnPos, Quaternion.identity, transform);
+            packet = Instantiate(goodPacketPrefab, packetSpawnPos, Quaternion.identity, transform);
             packet.GetComponent<PacketTravelScript>().SetTarget(transform.position);
         }
         else
         {
-            GameObject packet = Instantiate(virusPrefab, packetSpawnPos, Quaternion.identity, transform);
+            packet = Instantiate(virusPrefab, packetSpawnPos, Quaternion.identity, transform);
             packet.GetComponent<PacketTravelScript>().SetTarget(transform.position);
 
         }
@@ -94,6 +95,28 @@ public class ClientScript : MonoBehaviour
     }
 
 
+
+    //Called when the user clicks on the link
+    public void DisableClient()
+    {
+
+        if (!isDisabled && packet != null)
+        {
+            isDisabled = true;
+            packet = null;
+            userHasClickedAction.Invoke();
+            StartCoroutine(EnableClient());
+        }
+
+    }
+
+
+
+    IEnumerator EnableClient()
+    {
+        yield return new WaitForSeconds(disabledTime);
+        isDisabled = false;
+    }
 
 
 
