@@ -7,11 +7,11 @@ public class ClientScript : MonoBehaviour
 {
 
     [SerializeField] GameObject goodPacketPrefab, virusPrefab;
-
+    [SerializeField] Renderer cylinderLinkRenderer;
+    [SerializeField] Material defaultMat, goodMat, badMat;
     float packetSpawnMinTime = 6f, packetSpawnMaxTime, disabledTime = 5f;
-
     float packetSpeed = 1f; //Will be modified by game manage through action
-
+    float lerpValue = 0f;
 
     bool canGeneratePacket = true, isDisabled = false, gameRunning = true;
     Vector3 packetSpawnPos;
@@ -47,6 +47,7 @@ public class ClientScript : MonoBehaviour
     void Update()
     {
         GeneratePackets();
+        ColourHandler();
     }
 
 
@@ -68,7 +69,24 @@ public class ClientScript : MonoBehaviour
     }
 
 
+    private void ColourHandler()
+    {
+        if(packet == null)
+        {
+            //float lerp = Mathf.PingPong(Time.time, duration) / duration;
+            cylinderLinkRenderer.material.Lerp(cylinderLinkRenderer.material, defaultMat, lerpValue + Time.deltaTime);
+        }
+        else if(packet.tag == "virus")
+        {
+            cylinderLinkRenderer.material.Lerp(cylinderLinkRenderer.material, badMat, lerpValue + Time.deltaTime);
 
+        }
+        else
+        {
+            cylinderLinkRenderer.material.Lerp(cylinderLinkRenderer.material, goodMat, lerpValue + Time.deltaTime);
+
+        }
+    }
 
 
 
@@ -123,7 +141,15 @@ public class ClientScript : MonoBehaviour
             packet = Instantiate(virusPrefab, packetSpawnPos, Quaternion.identity, transform);
 
         }
+        if(packetSpawnMinTime == 0f)
+        {
+            lerpValue = 1f;
+        }
+        else
+        {
+            lerpValue = 0f;
 
+        }
         packet.GetComponent<PacketTravelScript>().SetTarget(transform.position);
         packet.GetComponent<PacketTravelScript>().SetSpeed(packetSpeed);
         float waitTime = UnityEngine.Random.Range(packetSpawnMinTime, packetSpawnMaxTime);

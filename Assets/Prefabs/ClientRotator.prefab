@@ -1501,6 +1501,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goodPacketPrefab: {fileID: 2471206925123527620, guid: 5ec4ba7ecdafd11409c93b06d297a28e, type: 3}
   virusPrefab: {fileID: 7895021283972271979, guid: fc677d4684362aa4da6e25e1c3d59cde, type: 3}
+  cylinderLinkRenderer: {fileID: 1532454035478461050}
+  defaultMat: {fileID: 2100000, guid: 11b2df37fcd2e4446afbbf815e393276, type: 2}
+  goodMat: {fileID: 2100000, guid: 5ff9d4eee162b6b4db485dcb3ab69b71, type: 2}
+  badMat: {fileID: 2100000, guid: 873a4d4490ce7194cba9ad8ee01607c2, type: 2}
 --- !u!1 &3417711857272233813
 GameObject:
   m_ObjectHideFlags: 0
