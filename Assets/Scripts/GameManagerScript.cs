@@ -226,7 +226,6 @@ public class GameManagerScript : MonoBehaviour
         godMode = true;
         spawnTimerAction.Invoke(0f);
         godModeAction.Invoke(godModePacketSpeed);
-        Debug.Log("godMode");
         StartCoroutine(DisableGodMode());
     }
 
@@ -239,7 +238,6 @@ public class GameManagerScript : MonoBehaviour
         godModeAction.Invoke(defaulPacketSpeed);
         antiVirusHealth = 0;
         antiVirusHealthImage.fillAmount = (float)antiVirusHealth / (float)antiVirusHealthMax;
-        Debug.Log("godMode disabled");
 
     }
 

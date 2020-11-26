@@ -8,11 +8,12 @@ public class PacketTravelScript : MonoBehaviour
     float speed = 1f;
     Rigidbody rigidBody;
     Vector3 startPosition, targetPosition, direction;
+    ParticleSystem myParticleSystem;
 
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
-
+        myParticleSystem = GetComponentInChildren<ParticleSystem>();
     }
 
     //Subscribe to the event
@@ -54,10 +55,22 @@ public class PacketTravelScript : MonoBehaviour
     {
         speed = 0f;
         //Invoke func to exploded virus
-        Destroy(gameObject, destroyTime);
+        //Destroy(gameObject, destroyTime);
+        StartCoroutine(SelfDestruct(destroyTime));
+        
     }
 
 
+
+    IEnumerator SelfDestruct(float destroyTime)
+    {
+        yield return new WaitForSeconds(destroyTime);
+        gameObject.GetComponent<MeshRenderer>().enabled = false;
+        myParticleSystem.Play();
+        yield return new WaitForSeconds(myParticleSystem.main.duration);
+        Destroy(gameObject);
+
+    }
 
 
 
