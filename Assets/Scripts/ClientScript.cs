@@ -9,6 +9,10 @@ public class ClientScript : MonoBehaviour
     [SerializeField] GameObject goodPacketPrefab, virusPrefab;
 
     float packetSpawnMinTime = 6f, packetSpawnMaxTime, disabledTime = 5f;
+
+    float packetSpeed = 1f; //Will be modified by game manage through action
+
+
     bool canGeneratePacket = true, isDisabled = false, gameRunning = true;
     Vector3 packetSpawnPos;
     GameObject packet;
@@ -19,14 +23,15 @@ public class ClientScript : MonoBehaviour
     private void OnEnable()
     {
         GameManagerScript.spawnTimerAction += SetSpawnSpeed;
-        //GameManagerScript.instance.Subscribe(SetSpawnSpeed);
+        GameManagerScript.godModeAction += ModifySpeed;
+
     }
 
 
     private void OnDisable()
     {
         GameManagerScript.spawnTimerAction -= SetSpawnSpeed;
-        //GameManagerScript.instance.UnSubscribe(SetSpawnSpeed);
+        GameManagerScript.godModeAction -= ModifySpeed;
 
     }
 
@@ -49,7 +54,17 @@ public class ClientScript : MonoBehaviour
     private void SetSpawnSpeed(float minSpawnSpeed)
     {
         packetSpawnMinTime = minSpawnSpeed;
-        packetSpawnMaxTime = minSpawnSpeed + 1f;
+        
+        if(minSpawnSpeed == 0f)
+        {
+            packetSpawnMaxTime = minSpawnSpeed + 0.3f;
+
+        }
+        else
+        {
+            packetSpawnMaxTime = minSpawnSpeed + 1f;
+
+        }
     }
 
 
@@ -110,6 +125,7 @@ public class ClientScript : MonoBehaviour
         }
 
         packet.GetComponent<PacketTravelScript>().SetTarget(transform.position);
+        packet.GetComponent<PacketTravelScript>().SetSpeed(packetSpeed);
         float waitTime = UnityEngine.Random.Range(packetSpawnMinTime, packetSpawnMaxTime);
         yield return new WaitForSeconds(waitTime);
         if (gameRunning)
@@ -198,4 +214,20 @@ public class ClientScript : MonoBehaviour
         }
 
     }
+
+
+
+    //Modifies speed during start and end of god mode
+    private void ModifySpeed(float newSpeed)
+    {
+        packetSpeed = newSpeed;
+
+        if (packet)
+        {
+            packet.GetComponent<PacketTravelScript>().SetSpeed(packetSpeed);
+        }
+    }
+
+
+
 }

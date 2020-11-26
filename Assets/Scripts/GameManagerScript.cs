@@ -12,18 +12,20 @@ public class GameManagerScript : MonoBehaviour
     //Singleton pattern
     public static GameManagerScript instance;
 
-    [SerializeField] float packetSpawnMinTime = 6f;
+    [Header("Particle settings")]
+    [SerializeField] float defaulPacketSpeed = 1f;
+    [SerializeField] float godModePacketSpeed = 10f, packetSpawnMinTime = 6f, godModeTime = 5f;
     [SerializeField] GameObject startPanel, endPanel;
     [SerializeField] List<GameObject> clients;
     [SerializeField] TextMeshProUGUI goodPacketsText, virusesTerminatedText;
     [SerializeField] Image serverHealthImage, antiVirusHealthImage;
     [SerializeField] LayerMask layerMask;
-    public static Action<float> spawnTimerAction;
+    public static Action<float> spawnTimerAction, godModeAction;
 
 
-    int serverHealth, serverHealthMax = 15, antiVirusHealthMax = 30, virusesTerminated;
+    int serverHealth, serverHealthMax = 15, antiVirusHealthMax = 10, virusesTerminated, timeForSpawnReduction = 5;
     public int score, antiVirusHealth;
-    bool gameStarted = false;
+    bool gameStarted = false, godMode = false;
 
     private void Awake()
     {
@@ -47,6 +49,8 @@ public class GameManagerScript : MonoBehaviour
         startPanel.SetActive(true);
         score = 0;
         spawnTimerAction.Invoke(packetSpawnMinTime);
+        godModeAction.Invoke(defaulPacketSpeed);
+
     }
 
 
@@ -56,6 +60,46 @@ public class GameManagerScript : MonoBehaviour
     {
         CheckClick();
     }
+
+    //Starts the game
+    public void StartGame()
+    {
+        gameStarted = true;
+        ClientScript[] clientScripts = FindObjectsOfType<ClientScript>();
+
+        foreach (ClientScript child in clientScripts)
+        {
+            child.StartTrasmission();
+        }
+        startPanel.SetActive(false);
+        goodPacketsText.text = "Good Packets : 0";
+        virusesTerminatedText.text = "Viruses Terminated : 0";
+    }
+
+
+    //end the game 
+    public void EndGame()
+    {
+        ClientScript[] clientScripts = FindObjectsOfType<ClientScript>();
+        Debug.Log("array length     " + clientScripts.Length);
+        foreach (ClientScript child in clientScripts)
+        {
+            child.StopTransmission();
+        }
+
+
+        endPanel.SetActive(true);
+        //Stop emmitting packets
+        //Display restart and score?
+    }
+
+
+    //Restarts the game
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(0);
+    }
+
 
 
     private void OnTriggerEnter(Collider other)
@@ -90,7 +134,7 @@ public class GameManagerScript : MonoBehaviour
                 resetAntivirus();
             }
 
-            if(score % 15 == 0 && packetSpawnMinTime>1f)
+            if(score % timeForSpawnReduction == 0 && packetSpawnMinTime>1f)
             {
                 packetSpawnMinTime -= 1f;
                 spawnTimerAction.Invoke(packetSpawnMinTime);
@@ -111,7 +155,7 @@ public class GameManagerScript : MonoBehaviour
 
         Destroy(other.gameObject);
 
-        if (gameStarted)
+        if (gameStarted && !godMode)
         {
             serverHealth -= 1;
             if (serverHealth == 0)
@@ -168,56 +212,37 @@ public class GameManagerScript : MonoBehaviour
     {
         //Delay
         //speed up?
-        if(score <= 30)
+        if(score == antiVirusHealthMax)
         {
             clients[3].SetActive(true);
             clients[4].SetActive(true);
         }
-        else if(score <= 90)
+        else if(score == antiVirusHealthMax * 2)
         {
             clients[5].SetActive(true);
             clients[6].SetActive(true);
         }
+
+        godMode = true;
+        spawnTimerAction.Invoke(0f);
+        godModeAction.Invoke(godModePacketSpeed);
+        Debug.Log("godMode");
+        StartCoroutine(DisableGodMode());
+    }
+
+    //-1 Means that the default speed in the script will  be set
+    IEnumerator DisableGodMode()
+    {
+        yield return new WaitForSeconds(godModeTime);
+        godMode = false;
+        spawnTimerAction.Invoke(packetSpawnMinTime);
+        godModeAction.Invoke(defaulPacketSpeed);
         antiVirusHealth = 0;
+        antiVirusHealthImage.fillAmount = (float)antiVirusHealth / (float)antiVirusHealthMax;
+        Debug.Log("godMode disabled");
+
     }
 
 
-    //Starts the game
-    public void StartGame()
-    {
-        gameStarted = true;
-        ClientScript[] clientScripts = FindObjectsOfType<ClientScript>();
 
-        foreach (ClientScript child in clientScripts)
-        {
-            child.StartTrasmission();
-        }
-        startPanel.SetActive(false);
-        goodPacketsText.text = "Good Packets : 0";
-        virusesTerminatedText.text = "Viruses Terminated : 0";
-    }
-
-
-    //end the game 
-    public void EndGame()
-    {
-        ClientScript[] clientScripts = FindObjectsOfType<ClientScript>();
-        Debug.Log("array length     " + clientScripts.Length);
-        foreach(ClientScript child in clientScripts)
-        {
-            child.StopTransmission();
-        }
-
-
-        endPanel.SetActive(true);
-        //Stop emmitting packets
-        //Display restart and score?
-    }
-
-
-    //Restarts the game
-    public void RestartGame()
-    {
-        SceneManager.LoadScene(0);
-    }
 }

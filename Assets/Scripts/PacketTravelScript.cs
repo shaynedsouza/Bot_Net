@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PacketTravelScript : MonoBehaviour
 {
-    [SerializeField] float speed = 4f;
+    float speed = 1f;
     Rigidbody rigidBody;
     Vector3 startPosition, targetPosition, direction;
 
@@ -46,9 +46,9 @@ public class PacketTravelScript : MonoBehaviour
         rigidBody.velocity = direction * speed;
 
 
-    } 
-    
-    
+    }
+
+
     //Invoked via subscription to the clientScript event, used to stop the packet
     private void FreezeTravel(float destroyTime)
     {
@@ -69,5 +69,13 @@ public class PacketTravelScript : MonoBehaviour
         direction = (targetPosition - startPosition).normalized;
 
     }
+
+    public void SetSpeed(float newSpeed)
+    {
+        speed = newSpeed;
+    }
+
+
+
 
 }

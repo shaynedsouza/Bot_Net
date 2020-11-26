@@ -6849,7 +6849,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc4c72ffda0d60d4ea231b461bd0935a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaulPacketSpeed: 4
+  godModePacketSpeed: 10
   packetSpawnMinTime: 6
+  godModeTime: 5
   startPanel: {fileID: 0}
   endPanel: {fileID: 0}
   clients:
@@ -6867,6 +6870,8 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 256
+  score: 0
+  antiVirusHealth: 0
 --- !u!65 &7271894476437097038
 BoxCollider:
   m_ObjectHideFlags: 0
