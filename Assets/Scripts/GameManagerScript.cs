@@ -129,7 +129,7 @@ public class GameManagerScript : MonoBehaviour
             score += 1;
             goodPacketsText.text = $"Good Packets : {score}";
             antiVirusHealthImage.fillAmount = (float)antiVirusHealth / (float)antiVirusHealthMax;
-            if (antiVirusHealth == antiVirusHealthMax)
+            if (score % antiVirusHealthMax == 0)
             {
                 resetAntivirus();
             }
@@ -138,7 +138,7 @@ public class GameManagerScript : MonoBehaviour
             {
                 packetSpawnMinTime -= 1f;
                 spawnTimerAction.Invoke(packetSpawnMinTime);
-                Debug.Log($"Min spawn time : {packetSpawnMinTime}");
+                //Debug.Log($"Min spawn time : {packetSpawnMinTime}");
             }
 
 
@@ -157,6 +157,16 @@ public class GameManagerScript : MonoBehaviour
 
         if (gameStarted && !godMode)
         {
+            try
+            {
+                FindObjectOfType<CameraScript>().IsHurt();
+            }         
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
+            }
+
+
             serverHealth -= 1;
             if (serverHealth == 0)
             {
@@ -212,6 +222,8 @@ public class GameManagerScript : MonoBehaviour
     {
         //Delay
         //speed up?
+        Debug.Log(score);
+
         if(score == antiVirusHealthMax)
         {
             clients[3].SetActive(true);

@@ -1463,6 +1463,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3251184895093890954}
   - component: {fileID: 1173032964}
+  - component: {fileID: 2095337106}
   m_Layer: 0
   m_Name: ClientRotator
   m_TagString: clientWithLink
@@ -1505,6 +1506,25 @@ MonoBehaviour:
   defaultMat: {fileID: 2100000, guid: 11b2df37fcd2e4446afbbf815e393276, type: 2}
   goodMat: {fileID: 2100000, guid: 5ff9d4eee162b6b4db485dcb3ab69b71, type: 2}
   badMat: {fileID: 2100000, guid: 873a4d4490ce7194cba9ad8ee01607c2, type: 2}
+--- !u!95 &2095337106
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3251184895093890957}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3a88a7644630302489c5fc29c9fa28e2, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &3417711857272233813
 GameObject:
   m_ObjectHideFlags: 0
@@ -1611,7 +1631,7 @@ Transform:
   m_GameObject: {fileID: 3642754516980374027}
   m_LocalRotation: {x: 0.0676117, y: -0.0011306073, z: 0.027484965, w: 0.99733245}
   m_LocalPosition: {x: 0.247, y: -1.599, z: -4.9490004}
-  m_LocalScale: {x: 0.8000001, y: 0.80000013, z: 0.80000013}
+  m_LocalScale: {x: 0.8000001, y: 0.8000001, z: 0.8000001}
   m_Children:
   - {fileID: 2255792075652726888}
   - {fileID: 5765883477084382660}

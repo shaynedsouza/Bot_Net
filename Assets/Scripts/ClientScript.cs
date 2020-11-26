@@ -9,6 +9,8 @@ public class ClientScript : MonoBehaviour
     [SerializeField] GameObject goodPacketPrefab, virusPrefab;
     [SerializeField] Renderer cylinderLinkRenderer;
     [SerializeField] Material defaultMat, goodMat, badMat;
+
+    Animator animator;
     float packetSpawnMinTime = 6f, packetSpawnMaxTime, disabledTime = 5f;
     float packetSpeed = 1f; //Will be modified by game manage through action
     float lerpValue = 0f;
@@ -37,6 +39,7 @@ public class ClientScript : MonoBehaviour
 
     void Start()
     {
+        animator = GetComponent<Animator>();
         packetSpawnMaxTime = packetSpawnMinTime + 1f;
         SetPacketSpawnPos();
     }
@@ -150,6 +153,7 @@ public class ClientScript : MonoBehaviour
             lerpValue = 0f;
 
         }
+        animator.SetTrigger("hasSpawned");
         packet.GetComponent<PacketTravelScript>().SetTarget(transform.position);
         packet.GetComponent<PacketTravelScript>().SetSpeed(packetSpeed);
         float waitTime = UnityEngine.Random.Range(packetSpawnMinTime, packetSpawnMaxTime);
