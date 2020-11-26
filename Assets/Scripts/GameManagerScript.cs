@@ -20,10 +20,13 @@ public class GameManagerScript : MonoBehaviour
     [SerializeField] TextMeshProUGUI goodPacketsText, virusesTerminatedText;
     [SerializeField] Image serverHealthImage, antiVirusHealthImage;
     [SerializeField] LayerMask layerMask;
+    [SerializeField] Animator hurtAnimator;
+
+
+    Animator serverAnimator;
     public static Action<float> spawnTimerAction, godModeAction;
 
-
-    int serverHealth, serverHealthMax = 15, antiVirusHealthMax = 10, virusesTerminated, timeForSpawnReduction = 5;
+    int serverHealth, serverHealthMax = 15, antiVirusHealthMax = 40, virusesTerminated, timeForSpawnReduction = 5;
     public int score, antiVirusHealth;
     bool gameStarted = false, godMode = false;
 
@@ -42,6 +45,7 @@ public class GameManagerScript : MonoBehaviour
 
     void Start()
     {
+        serverAnimator = GetComponent<Animator>();
         antiVirusHealth = 0;
         serverHealth = serverHealthMax;
         goodPacketsText.text = "Good Packets : 0";
@@ -160,6 +164,7 @@ public class GameManagerScript : MonoBehaviour
             try
             {
                 FindObjectOfType<CameraScript>().IsHurt();
+                hurtAnimator.SetTrigger("isHurt");
             }         
             catch (Exception e)
             {
@@ -220,9 +225,7 @@ public class GameManagerScript : MonoBehaviour
 
     private void resetAntivirus()
     {
-        //Delay
-        //speed up?
-        Debug.Log(score);
+
 
         if(score == antiVirusHealthMax)
         {
@@ -234,8 +237,9 @@ public class GameManagerScript : MonoBehaviour
             clients[5].SetActive(true);
             clients[6].SetActive(true);
         }
-
+        Debug.Log("god mode");
         godMode = true;
+        serverAnimator.SetTrigger("isProtecting");
         spawnTimerAction.Invoke(0f);
         godModeAction.Invoke(godModePacketSpeed);
         StartCoroutine(DisableGodMode());
@@ -246,6 +250,7 @@ public class GameManagerScript : MonoBehaviour
     {
         yield return new WaitForSeconds(godModeTime);
         godMode = false;
+        serverAnimator.SetTrigger("finishedProtecting");
         spawnTimerAction.Invoke(packetSpawnMinTime);
         godModeAction.Invoke(defaulPacketSpeed);
         antiVirusHealth = 0;
