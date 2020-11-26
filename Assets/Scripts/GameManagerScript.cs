@@ -237,7 +237,6 @@ public class GameManagerScript : MonoBehaviour
             clients[5].SetActive(true);
             clients[6].SetActive(true);
         }
-        Debug.Log("god mode");
         godMode = true;
         serverAnimator.SetTrigger("isProtecting");
         spawnTimerAction.Invoke(0f);
